@@ -36,7 +36,7 @@ async function deployBridgeContract(cfg) {
         // Deploy
         let contract = await factory.deploy(
             constants.RELAYER_ADDRESS,
-            cfg
+            2
         );
 
         console.log("[Bridge] Contract address: ", contract.address);
