@@ -15,8 +15,8 @@ const constants = require('./constants');
 // Capture argument
 cli
     .option('--relayers <value>', 'Number of relayers', 2)
-    .option('-v, --relayer-threshold <value>', 'Value of relayer threshold', 1)
-    .option('-d, --deposit-threshold <value>', 'Value of deposit threshold', 1)
+    .option('-v, --relayer-threshold <value>', 'Value of relayer threshold', 2)
+    .option('-d, --deposit-threshold <value>', 'Value of deposit threshold', 2)
     .option('-p, --port <value>', 'Port of RPC instance', 8545)
     .option('--deposit-erc', "Make an ERC20 deposit", false)
     .option('--deposit-nft', "Make an ERC721 deposit", false)
