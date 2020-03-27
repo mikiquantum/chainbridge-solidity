@@ -21,7 +21,7 @@ async function deployRelayerContract(cfg) {
     // Deploy
     let contract = await factory.deploy(
         relayers,
-        cfg.relayerThreshold
+        2
     );
     console.log("[Relayer] Contract address: ", contract.address);
     console.log("[Relayer] Transaction Hash: ", contract.deployTransaction.hash);
