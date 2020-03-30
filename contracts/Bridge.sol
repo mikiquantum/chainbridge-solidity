@@ -12,6 +12,7 @@ contract Bridge {
     IRelayer                 public _relayerContract;
     uint256                  public _relayerThreshold;
     RelayerThresholdProposal public _currentRelayerThresholdProposal;
+    string[]                 public _supportedDepositTypes;
 
     enum Vote {No, Yes}
     enum RelayerThresholdProposalStatus {Inactive, Active}
@@ -88,10 +89,15 @@ contract Bridge {
         _;
     }
 
-    constructor (uint256 chainID, address relayerContract, uint initialRelayerThreshold) public {
+    constructor (
+        uint256 chainID,
+        address relayerContract,
+        uint256 initialRelayerThreshold,
+        string[] memory initialSupportedDepositTypes) public {
         _chainID = chainID;
         _relayerContract = IRelayer(relayerContract);
         _relayerThreshold = initialRelayerThreshold;
+        _supportedDepositTypes = initialSupportedDepositTypes;
     }
 
     function getCurrentRelayerThresholdProposal() public view returns (
@@ -113,13 +119,20 @@ contract Bridge {
     }
 
     function deposit(
+        uint256      supportedDepositTypeIndex,
         address      originChainHandlerAddress,
         bytes memory data
     ) public {
+        require(supportedDepositTypeIndex >= 0, "invalid support deposit type index");
+        require(supportedDepositTypeIndex <= _supportedDepositTypes.length, "deposit type is not supported");
         uint256 depositNonce = ++_depositCounts[originChainHandlerAddress];
         _depositRecords[originChainHandlerAddress][depositNonce] = data;
 
         IDepositHandler depositHandler = IDepositHandler(originChainHandlerAddress);
+        require(
+            keccak256(bytes(depositHandler.getDepositType())) ==
+            keccak256(bytes(_supportedDepositTypes[supportedDepositTypeIndex])),
+            "supported deposit type index does not match provided handler's deposit type");
         depositHandler.deposit(depositNonce, msg.sender, data);
 
         emit Deposit(_chainID, originChainHandlerAddress, depositNonce);
